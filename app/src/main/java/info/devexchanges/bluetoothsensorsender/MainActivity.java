@@ -31,6 +31,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private String sendingOption;
 
 
-    List<String> sendingOptions = Arrays.asList("","Random", "Zeros", "Random without warning");
+    List<String> sendingOptions = Arrays.asList("","Random", "Zeros", "Random without warning", "Toe off", "Heel strike");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -285,10 +287,28 @@ public class MainActivity extends AppCompatActivity {
                         sendMessage(Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(100))+"|"+Integer.toString(rand.nextInt(50)));
                         break;
                     case "Zeros":
+                    case "Toe off":
                         sendMessage("0|0|0|0|0|0|0|0|0|0|0|0|0|"+Integer.toString(rand.nextInt(100))+"|"+Integer.toString(rand.nextInt(50)));
                         break;
-                    case "Random without warning":
-                        sendMessage(Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(100))+"|"+Integer.toString(rand.nextInt(50)));
+                    case "Heel strike":
+                        sendMessage("0|0|0|0|0|0|"+Integer.toString(rand.nextInt(100))+"|"+Integer.toString(rand.nextInt(100))+"|"+Integer.toString(rand.nextInt(100))+"|0|0|0|0|"+Integer.toString(rand.nextInt(100))+"|"+Integer.toString(rand.nextInt(50)));
+                        break;
+                    case "Random without warning (100 times)":
+                        final int[] a = {0};
+                        Timer t = new Timer();
+                        t.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                a[0]++;
+                                sendMessage(300+"|"+300+"|"+300+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(100))+"|"+Integer.toString(rand.nextInt(50)));
+
+                                if(a[0]==100){
+                                    t.cancel();
+                                }
+                            }
+                        }, 0, 350);
+
+                        //sendMessage(300+"|"+300+"|"+300+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(100))+"|"+Integer.toString(rand.nextInt(50)));
                         break;
                 }
 
