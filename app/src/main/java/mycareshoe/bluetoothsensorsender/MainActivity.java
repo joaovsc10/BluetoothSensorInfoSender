@@ -1,4 +1,4 @@
-package info.devexchanges.bluetoothsensorsender;
+package mycareshoe.bluetoothsensorsender;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -8,7 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
@@ -22,10 +21,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +28,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import mycareshoe.bluetoothsensorsender.R;
+import mycareshoe.bluetoothsensorsender.ChatController;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -60,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private String sendingOption;
 
 
-    List<String> sendingOptions = Arrays.asList("","Random", "Zeros", "Random without warning", "Toe off", "Heel strike");
+    List<String> sendingOptions = Arrays.asList("", "Random values", "Mid-swing", "Random values without warning", "Heel strike", "Walk simulation - Left foot", "Walk simulation - Right foot");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,46 +67,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         findViewsByIds();
 
-        sendingOptionsSpinner=setSpinner(sendingOptionsSpinner, R.id.spinnerSendModes, sendingOptions, sendingOptionsAdapter, this.getWindow().getDecorView().findViewById(android.R.id.content));
+        sendingOptionsSpinner = setSpinner(sendingOptionsSpinner, R.id.spinnerSendModes, sendingOptions, sendingOptionsAdapter, this.getWindow().getDecorView().findViewById(android.R.id.content));
 
         sendingOptionsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                sendingOption=sendingOptions.get(position).toString();
+                sendingOption = sendingOptions.get(position).toString();
 
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                System.out.println("ehehe");
             }
 
         });
 
-
-        //Get the text file
-        File dir = new File(Environment.getExternalStorageDirectory().toString() + "/Download");
-        dir.mkdir();
-        File file = new File(dir, "BLABLABLAS.txt");
-
-
-        //Read text from file
-        StringBuilder text = new StringBuilder();
-
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(file));
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                text.append(line);
-                text.append('\n');
-            }
-            br.close();
-        }
-        catch (IOException e) {
-            System.out.println(e);
-        }
 
         //check device support bluetooth or not
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -275,40 +249,91 @@ public class MainActivity extends AppCompatActivity {
         View btnSend = findViewById(R.id.btn_send);
 
 
-
         btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
                 Random rand = new Random();
 
-                switch (sendingOption){
-                    case "Random":
-                        sendMessage(Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(300))+"|"+Integer.toString(rand.nextInt(100))+"|"+Integer.toString(rand.nextInt(50)));
+                switch (sendingOption) {
+                    case "Random values":
+
+                        sendMessage(Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(100)) + "|" + Integer.toString(rand.nextInt(50)));
+
                         break;
-                    case "Zeros":
+                    case "Mid-swing":
+                        sendMessage("0|0|0|0|0|0|0|0|0|0|0|0|0|" + Integer.toString(rand.nextInt(100)) + "|" + Integer.toString(rand.nextInt(50)));
+                        break;
                     case "Toe off":
-                        sendMessage("0|0|0|0|0|0|0|0|0|0|0|0|0|"+Integer.toString(rand.nextInt(100))+"|"+Integer.toString(rand.nextInt(50)));
+                        sendMessage(Integer.toString(rand.nextInt(299) + 1) + "|0|0|0|0|0|0|0|0|0|0|0|0|" + Integer.toString(rand.nextInt(100)) + "|" + Integer.toString(rand.nextInt(50)));
+
                         break;
                     case "Heel strike":
-                        sendMessage("0|0|0|0|0|0|"+Integer.toString(rand.nextInt(100))+"|"+Integer.toString(rand.nextInt(100))+"|"+Integer.toString(rand.nextInt(100))+"|0|0|0|0|"+Integer.toString(rand.nextInt(100))+"|"+Integer.toString(rand.nextInt(50)));
+                        sendMessage("0|0|0|0|0|0|" + Integer.toString(rand.nextInt(100) + 1) + "|" + Integer.toString(rand.nextInt(100) + 1) + "|" + Integer.toString(rand.nextInt(100) + 1) + "|0|0|0|0|" + Integer.toString(rand.nextInt(100)) + "|" + Integer.toString(rand.nextInt(50)));
                         break;
-                    case "Random without warning (100 times)":
-                        final int[] a = {0};
+                    case "Random values without warning":
+
+                        sendMessage(Integer.toString(rand.nextInt(199)) + "|" + Integer.toString(rand.nextInt(199)) + "|" + Integer.toString(rand.nextInt(199)) + "|" + Integer.toString(rand.nextInt(199)) + "|" + Integer.toString(rand.nextInt(199)) + "|" + Integer.toString(rand.nextInt(199)) + "|" + Integer.toString(rand.nextInt(199)) + "|" + Integer.toString(rand.nextInt(199)) + "|" + Integer.toString(rand.nextInt(199)) + "|" + Integer.toString(rand.nextInt(199)) + "|" + Integer.toString(rand.nextInt(199)) + "|" + Integer.toString(rand.nextInt(199)) + "|" + Integer.toString(rand.nextInt(199)) + "|" + Integer.toString(rand.nextInt(100)) + "|" + Integer.toString(rand.nextInt(50)));
+
+                        break;
+                    case "Walk simulation - Left foot":
+                        int[] counter = {0};
+                        int[] a = new int[]{0};
                         Timer t = new Timer();
                         t.schedule(new TimerTask() {
                             @Override
                             public void run() {
                                 a[0]++;
-                                sendMessage(300+"|"+300+"|"+300+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(100))+"|"+Integer.toString(rand.nextInt(50)));
-
-                                if(a[0]==100){
+                                if (a[0] == 1)
+                                    sendMessage("0|0|0|0|0|0|" + Integer.toString(rand.nextInt(100) + 1) + "|" + Integer.toString(rand.nextInt(100) + 1) + "|" + Integer.toString(rand.nextInt(100) + 1) + "|0|0|0|0|" + Integer.toString(rand.nextInt(100)) + "|" + Integer.toString(rand.nextInt(50)));
+                                else {
+                                    if (a[0] == 2)
+                                        sendMessage(Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(100)) + "|" + Integer.toString(rand.nextInt(50)));
+                                    else {
+                                        if (a[0] == 3)
+                                            sendMessage(Integer.toString(rand.nextInt(299) + 1) + "|0|0|0|0|0|0|0|0|0|0|0|0|" + Integer.toString(rand.nextInt(100)) + "|" + Integer.toString(rand.nextInt(50)));
+                                        else {
+                                            sendMessage("0|0|0|0|0|0|0|0|0|0|0|0|0|" + Integer.toString(rand.nextInt(100)) + "|" + Integer.toString(rand.nextInt(50)));
+                                            a[0] = 0;
+                                            counter[0]++;
+                                        }
+                                    }
+                                }
+                                if (counter[0] == 40) {
                                     t.cancel();
                                 }
                             }
-                        }, 0, 350);
+                        }, 0, 200);
 
-                        //sendMessage(300+"|"+300+"|"+300+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(199))+"|"+Integer.toString(rand.nextInt(100))+"|"+Integer.toString(rand.nextInt(50)));
+                        break;
+                    case "Walk simulation - Right foot":
+                        counter = new int[]{0};
+                        a = new int[]{0};
+                        t = new Timer();
+                        t.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                a[0]++;
+                                if (a[0] == 1)
+                                    sendMessage(Integer.toString(rand.nextInt(299) + 1) + "|0|0|0|0|0|0|0|0|0|0|0|0|" + Integer.toString(rand.nextInt(100)) + "|" + Integer.toString(rand.nextInt(50)));
+                                else {
+                                    if (a[0] == 2)
+                                        sendMessage("0|0|0|0|0|0|0|0|0|0|0|0|0|" + Integer.toString(rand.nextInt(100)) + "|" + Integer.toString(rand.nextInt(50)));
+                                    else {
+                                        if (a[0] == 3)
+                                            sendMessage("0|0|0|0|0|0|" + Integer.toString(rand.nextInt(100) + 1) + "|" + Integer.toString(rand.nextInt(100) + 1) + "|" + Integer.toString(rand.nextInt(100) + 1) + "|0|0|0|0|" + Integer.toString(rand.nextInt(100)) + "|" + Integer.toString(rand.nextInt(50)));
+                                        else {
+                                            sendMessage(Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(300)) + "|" + Integer.toString(rand.nextInt(100)) + "|" + Integer.toString(rand.nextInt(50)));
+                                            a[0] = 0;
+                                            counter[0]++;
+                                        }
+                                    }
+                                }
+                                if (counter[0] == 40) {
+                                    t.cancel();
+                                }
+                            }
+                        }, 0, 200);
                         break;
                 }
 
@@ -389,7 +414,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private Spinner setSpinner(Spinner spinner, int viewId, List<String> spinnerOptions, ArrayAdapter adapter, View view){
+    private Spinner setSpinner(Spinner spinner, int viewId, List<String> spinnerOptions, ArrayAdapter adapter, View view) {
 
         spinner = (Spinner) view.findViewById(viewId);
         adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, spinnerOptions);
